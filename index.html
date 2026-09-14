@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aditi Rao — Full Stack Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#top" class="logo">AR<span class="logo-mark">/</span></a>
+
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="sr-only">Menu</span>
+      </button>
+
+      <nav class="primary-nav" id="primaryNav">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact" class="nav-cta">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="hero-kicker">Full stack developer, based in Lucknow</p>
+        <h1 class="hero-title">I build interfaces that hold up on every screen.</h1>
+        <p class="hero-lede">From a single mobile column to a full desktop grid — same structure, same logic, no breakage in between.</p>
+        <a href="#work" class="btn-primary">See the work</a>
+      </div>
+    </section>
+
+    <section class="work" id="work">
+      <h2 class="section-title">Recent builds</h2>
+      <div class="card-grid">
+
+        <article class="card">
+          <div class="card-frame" aria-hidden="true">
+            <span class="corner corner-tl"></span>
+            <span class="corner corner-br"></span>
+          </div>
+          <h3>Responsive Layout Engine</h3>
+          <p>A component library built on CSS Grid for page structure and Flexbox for the small stuff — nav bars, button rows, card headers.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-frame" aria-hidden="true">
+            <span class="corner corner-tl"></span>
+            <span class="corner corner-br"></span>
+          </div>
+          <h3>Mobile-First Storefront</h3>
+          <p>Single column at 320px, two columns past 768px, full three-column layout at 1024px and up. No fixed widths anywhere.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-frame" aria-hidden="true">
+            <span class="corner corner-tl"></span>
+            <span class="corner corner-br"></span>
+          </div>
+          <h3>Accessible Nav Pattern</h3>
+          <p>Keyboard-reachable menu that collapses to a single button on small screens and expands inline on larger ones.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <h2 class="section-title">About</h2>
+      <p>Currently an intern at DecodeLabs, working through the fundamentals before touching any framework — semantic HTML, layout with Grid and Flexbox, and just enough JavaScript to make a page feel alive.</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div class="footer-inner">
+      <p class="footer-title">Let's talk</p>
+      <a href="mailto:hello@example.com" class="footer-email">hello@example.com</a>
+      <p class="footer-note">Built with HTML, CSS and JavaScript — no frameworks.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
