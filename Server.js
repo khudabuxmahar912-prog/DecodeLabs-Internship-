@@ -1,33 +1,43 @@
 const express = require('express');
+const db = require('./db');
+
 const app = express();
 const PORT = 3000;
 
-// Middleware to parse incoming JSON request bodies
 app.use(express.json());
 
-// ------------------------------------------------------
-// In-memory "database" — resets every time the server restarts
-// ------------------------------------------------------
-let tasks = [
-  { id: 1, title: 'Set up the repository', done: true },
-  { id: 2, title: 'Build the responsive frontend', done: true },
-  { id: 3, title: 'Build the backend API', done: false }
-];
-let nextId = 4;
+// ========================================================
+// CREATE — POST /tasks
+// ========================================================
+app.post('/tasks', (req, res) => {
+  const { title } = req.body;
 
-// ------------------------------------------------------
-// GET /tasks — retrieve all tasks
-// ------------------------------------------------------
+  // The Gatekeeper Rule: never trust client input.
+  if (!title || typeof title !== 'string' || title.trim().length === 0) {
+    return res.status(400).json({ error: 'A non-empty "title" string is required' });
+  }
+
+  // Parameterized query — the "?" placeholder means the title is always
+  // treated as plain data, never as executable SQL. This is what
+  // prevents SQL injection.
+  const insert = db.prepare('INSERT INTO tasks (title, done) VALUES (?, 0)');
+  const result = insert.run(title.trim());
+
+  const newTask = db.prepare('SELECT * FROM tasks WHERE id = ?').get(result.lastInsertRowid);
+  res.status(201).json(newTask);
+});
+
+// ========================================================
+// READ — GET /tasks (all) and GET /tasks/:id (one)
+// ========================================================
 app.get('/tasks', (req, res) => {
+  const tasks = db.prepare('SELECT * FROM tasks').all();
   res.status(200).json(tasks);
 });
 
-// ------------------------------------------------------
-// GET /tasks/:id — retrieve a single task by id
-// ------------------------------------------------------
 app.get('/tasks/:id', (req, res) => {
   const id = Number(req.params.id);
-  const task = tasks.find((t) => t.id === id);
+  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
 
   if (!task) {
     return res.status(404).json({ error: `Task with id ${id} not found` });
@@ -36,37 +46,55 @@ app.get('/tasks/:id', (req, res) => {
   res.status(200).json(task);
 });
 
-// ------------------------------------------------------
-// POST /tasks — create a new task
-// The Gatekeeper Rule: never trust the client. Validate first.
-// ------------------------------------------------------
-app.post('/tasks', (req, res) => {
-  const { title } = req.body;
+// ========================================================
+// UPDATE — PUT /tasks/:id
+// ========================================================
+app.put('/tasks/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const { title, done } = req.body;
 
-  // Basic validation
-  if (!title || typeof title !== 'string' || title.trim().length === 0) {
-    return res.status(400).json({ error: 'A non-empty "title" string is required' });
+  const existing = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+  if (!existing) {
+    return res.status(404).json({ error: `Task with id ${id} not found` });
   }
 
-  const newTask = {
-    id: nextId++,
-    title: title.trim(),
-    done: false
-  };
+  if (title !== undefined && (typeof title !== 'string' || title.trim().length === 0)) {
+    return res.status(400).json({ error: '"title" must be a non-empty string' });
+  }
 
-  tasks.push(newTask);
+  const updatedTitle = title !== undefined ? title.trim() : existing.title;
+  const updatedDone = done !== undefined ? (done ? 1 : 0) : existing.done;
 
-  // 201 Created — a new resource now exists
-  res.status(201).json(newTask);
+  db.prepare('UPDATE tasks SET title = ?, done = ? WHERE id = ?')
+    .run(updatedTitle, updatedDone, id);
+
+  const updatedTask = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+  res.status(200).json(updatedTask);
 });
 
-// ------------------------------------------------------
-// Fallback for any route that doesn't exist
-// ------------------------------------------------------
+// ========================================================
+// DELETE — DELETE /tasks/:id
+// ========================================================
+app.delete('/tasks/:id', (req, res) => {
+  const id = Number(req.params.id);
+
+  const existing = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+  if (!existing) {
+    return res.status(404).json({ error: `Task with id ${id} not found` });
+  }
+
+  db.prepare('DELETE FROM tasks WHERE id = ?').run(id);
+  res.status(204).send(); // 204 No Content — successfully deleted, nothing to return
+});
+
+// ========================================================
+// Fallback for unknown routes
+// ========================================================
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
+  console.log('Database file: tasks.db');
 });
