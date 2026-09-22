@@ -1,0 +1,12 @@
+{
+  "name": "decodelabs-project2-api",
+  "version": "1.0.0",
+  "description": "Backend API for DecodeLabs Internship Project 2",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
