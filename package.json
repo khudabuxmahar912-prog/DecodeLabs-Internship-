@@ -1,12 +1,13 @@
 {
-  "name": "decodelabs-project2-api",
+  "name": "decodelabs-project3-db",
   "version": "1.0.0",
-  "description": "Backend API for DecodeLabs Internship Project 2",
+  "description": "Database-integrated backend API for DecodeLabs Internship Project 3",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "better-sqlite3": "^11.3.0"
   }
 }
